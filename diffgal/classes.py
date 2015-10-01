@@ -90,7 +90,7 @@ class CRSet :
         self.isDead = False
 
 
-    def.udIsDead(self):
+    def udIsDead(self):
         dead = True
         for ray in self.rays :
             if not (ray.absorbed or ray.escaped):
