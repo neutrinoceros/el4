@@ -32,12 +32,19 @@ class CosmicRay :
         self.theta=np.arccos(self.mu)
 
 
-    def udpos(self) :
-        self.r = self.r + LIGHTC * np.sin(self.theta) * ts#radial projection of the velocity aplied
-        self.h = self.h + LIGHTC * self.mu * ts#...
+    def getnextpos(self,ts=TIMESTEP):
+        nextr = self.r + LIGHTC * np.sin(self.theta) * ts#radial projection of the velocity aplied
+        nexth = self.h + LIGHTC * self.mu * ts
+        return nextr,nexth
+
+
+    def udpos(self,ts=TIMESTEP) :
+        """update postion"""
+        self.r,self.h = self.getnexpos()
 
 
     def uddir(self) :
+        """update propagation direction"""
         self.mu = uniform(-1.,1.)
         self.phi = uniform(0.,2*np.pi)
         self.udtheta()
@@ -52,24 +59,20 @@ class CosmicRay :
         if absorption_criterion :
             self.absorbed=True
         else :
-            self.udpos()
+            self.udpos(ts)
 
         
     def propag(self,ts=TIMESTEP) :
         """propagation in the galactic halo, used for second stage of the simulation"""
-        newmu = self.mu
-        newphi = self.phi#default values
-        newr = LIGHTC*ts#...
-        newh = LIGHTC*ts#...
         #...
-
-        if self.h*newh < 0 :#passage dans le plan galactique, possibilité d'absorption
-            #...
+        nr,nh=self.getnextpos()
+        if self.h*nh < 0 :#traversée du plan galactique, possibilité d'absorption
             scattering_criterion = False
+            #...
             #evaluate probability of being scattered (elastic scattering)
             #...
             if scattering_criterion :
-                self.uddir(np.uniform(-1.,1.),np.uniform(0.,2*np.pi))
+                self.uddir()
             
         if abs(newh) > H0 :
             ray.escaped = True
@@ -80,6 +83,7 @@ class CosmicRay :
 
             
 class CRSet :
+
     def __init__(self,N):
         self.rays = [CosmicRay() for n in range N]
         self.epoch = 0.
@@ -103,6 +107,7 @@ class CRSet :
             if not ray.absorded :
                 ray.diffuse(ts)
         self.udIsDead()
+        self.epoch+=1
         
 
     def walk(ts=TIMESTEP):
@@ -111,3 +116,4 @@ class CRSet :
             if not (ray.absorded or ray.escaped) :
                 ray.propag(ts)
         self.udIsDead()
+        self.epoch+=1
