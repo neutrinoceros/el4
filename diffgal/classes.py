@@ -2,7 +2,7 @@
 
 from parameters import *
 import numpy as np
-from numpy.random import rand
+from numpy.random import rand, uniform
 import pylab as pl
 
 #-------------------------
@@ -16,33 +16,47 @@ class CosmicRay :
         self.r = rand()#...  
         self.h = 0.
         self.E = rand()#...
-        self.mu = # ??? ...
-        self.phi = 0#diffusion purement radiale initialement
+
+        #mu, phi : propagation direction in spherical coords
+        self.mu = uniform(-1.,1.)#mu=cos(theta) is uniformly distributed
+        self.phi = uniform(0.,2*np.pi)
+        self.theta = 0.#python declaration...
+        self.udtheta()
+
+        #initialy the particle is neither absorbed nor away from the galaxy or its halo
         self.absorbed = False
         self.escaped = False
 
-    def udpos(self,newr,newh) :
-        self.r=newr
-        self.h=newh
+
+    def udtheta(self) :
+        self.theta=np.arccos(self.mu)
 
 
-    def uddir(self,newmu,newphi) :
-        self.mu = newmu
-        self.phi = newphi
+    def udpos(self) :
+        self.r = self.r + LIGHTC * np.sin(self.theta) * ts#radial projection of the velocity aplied
+        self.h = self.h + LIGHTC * self.mu * ts#...
+
+
+    def uddir(self) :
+        self.mu = uniform(-1.,1.)
+        self.phi = uniform(0.,2*np.pi)
+        self.udtheta()
+        
+
+    def diffuse(self,ts=TIMESTEP) :
+        """diffusion through the galactic plan, used for first stage of the simulation"""
+        absorption_criterion=False
+        #...
+        #evaluate probability of being absorbed 
+        #...
+        if absorption_criterion :
+            self.absorbed=True
+        else :
+            self.udpos()
 
         
-    def diffuse(self,ts=TIMESTEP) :
-        #ts : timestep
-        """diffusion through the galactic plan"""
-        newmu = self.mu
-        newphi = self.phi#default values
-        newr = LIGHTC*ts#...
-        newh = LIGHTC*ts#...
-        #...
-
-
     def propag(self,ts=TIMESTEP) :
-        """propagation in the galactic halo"""
+        """propagation in the galactic halo, used for second stage of the simulation"""
         newmu = self.mu
         newphi = self.phi#default values
         newr = LIGHTC*ts#...
@@ -51,6 +65,12 @@ class CosmicRay :
 
         if self.h*newh < 0 :#passage dans le plan galactique, possibilité d'absorption
             #...
+            scattering_criterion = False
+            #evaluate probability of being scattered (elastic scattering)
+            #...
+            if scattering_criterion :
+                self.uddir(np.uniform(-1.,1.),np.uniform(0.,2*np.pi))
+            
         if abs(newh) > H0 :
             ray.escaped = True
 
@@ -73,10 +93,11 @@ class CRSet :
                 dead = False
                 break
         self.isDead = dead
+        print "He's dead Jim"
 
             
     def walk0(ts=TIMESTEP):
-        #need caractèrisation de "traverser la moitié du plan gal
+        #need caractèrisation de "traverser la moitié du plan gal"
         dead = True
         for ray in self.rays :
             if not ray.absorded :
