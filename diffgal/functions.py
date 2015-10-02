@@ -1,7 +1,7 @@
 #-*-coding:utf-8-*-
 
 import numpy as np
-from paramaters import *
+from parameters import *
 
 
 #----------------------------------
@@ -14,6 +14,9 @@ def sigma(R):
 
 def opticalDepth(R):
     return KAPPA*sigma(R)
+
+def absorptionProb(R):
+    return np.exp(opticalDepth(R))
 
 def sourceDensity(R):
     return (1+(R/RCR)**2)**(-ALPHA)

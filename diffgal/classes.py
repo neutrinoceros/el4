@@ -1,6 +1,7 @@
 #-*-coding:utf-8-*-
 
 from parameters import *
+from functions import *
 import numpy as np
 from numpy.random import rand, uniform
 import pylab as pl
@@ -26,6 +27,9 @@ class CosmicRay :
         #initialy the particle is neither absorbed nor away from the galaxy or its halo
         self.absorbed = False
         self.escaped = False
+
+        if rand() < absorptionProb(self.r)/2 :#une "demie traversée" à la naissance
+            self.absorbed = True
 
 
     def udtheta(self) :
@@ -85,7 +89,7 @@ class CosmicRay :
 class CRSet :
 
     def __init__(self,N):
-        self.rays = [CosmicRay() for n in range N]
+        self.rays = [CosmicRay() for n in range(N)]
         self.epoch = 0.
         self.isDead = False
 
