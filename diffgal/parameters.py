@@ -19,4 +19,4 @@ BETA=0.5#adim
 
 ##
 TIMESTEP=1.#???
-MAXEPOCH=1e8 #???
+MAXEPOCH=5e1 #???
