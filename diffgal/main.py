@@ -16,7 +16,8 @@ fig=pl.figure()
 bench = CRSet(int(1e4))
 while bench.epoch < MAXEPOCH and not bench.isDead :
     bench.walk()
-    if bench.epoch in [1,MAXEPOCH] or bench.epoch % 5 == 0 :
+    #if bench.epoch in [1,MAXEPOCH] or bench.epoch % 5 == 0 :
+    if 1 :
         fig.clf()
         pl.xlim(0,5e1)
         pl.ylim(-H0-1,H0+1)

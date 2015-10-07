@@ -37,6 +37,7 @@ class CosmicRay :
 
 
     def getnextpos(self,ts=TIMESTEP):
+        #NB : acutal radial and vertical velocities need to be adjusted to take azimutal vel into account
         nextr = self.r + LIGHTC * np.sin(self.theta) * ts#radial projection of the velocity aplied
         nexth = self.h + LIGHTC * np.cos(self.theta) * ts
         return nextr,nexth
@@ -123,9 +124,9 @@ class CRSet :
             else :
                 r_alive.append(ray.r) 
                 h_alive.append(ray.h)
-        pl.scatter(r_alive,h_alive,color="blue",alpha=0.5)
-        pl.scatter(r_abs,h_abs,color="red",alpha=0.5)
-        pl.scatter(r_esc,h_esc,color="green",alpha=0.5)
+        pl.scatter(r_alive,h_alive,color="blue",alpha=0.8,s=.5)
+        pl.scatter(r_abs,h_abs,color="red",alpha=0.8,s=.5)
+        pl.scatter(r_esc,h_esc,color="green",alpha=0.8,s=.5)
 
         #rmin,rmax=ax.get_xlim()
         rrr=np.linspace(0,1e3,100)
