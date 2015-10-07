@@ -14,9 +14,9 @@ class CosmicRay :
 
     def __init__(self) :
         """constructeur d'une particule aléatoire dans le plan galactique"""
-        self.r = uniform(-RGAS,RGAS)#(rand()-rand())*RGAS#TEMP  
+        self.r = uniform(0,RGAS)#TEMPORARY
         self.h = 0.
-        self.E = uniform(EMIN,EMAX)#EMIN + (rand()-rand())*(EMAX-EMIN)#TEMP
+        self.E = uniform(EMIN,EMAX)#TEMPORARY
 
         #mu, phi : propagation direction in spherical coords
         self.mu = uniform(-1.,1.)#mu=cos(theta) is uniformly distributed
@@ -28,8 +28,8 @@ class CosmicRay :
         self.absorbed = False
         self.escaped = False
 
-        if rand() < absorptionProb(self.r)/2 :#une "demie traversée" à la naissance
-            self.absorbed = True
+        #if rand() < absorptionProb(self.r)/2 :#une "demie traversée" à la naissance
+        #    self.absorbed = True
 
 
     def udtheta(self) :
@@ -54,32 +54,31 @@ class CosmicRay :
         self.udtheta()
         
 
+    def scatteringProb(self,ts=TIMESTEP):
+        d=LIGHTC*ts
+        mfp=LAMBDA0*self.E**BETA
+        return d/mfp*np.exp(-d/mfp)
+
+
+    def absorptionProb(self):
+        return np.exp(opticalDepth(self.r))
+
+
     def propag(self,ts=TIMESTEP) :
         """in the galactic halo"""
 
         nr,nh=self.getnextpos()
         if self.h*nh < 0 :#traversée du plan galactique, possibilité d'absorption
-            absorption_criterion=False
-            #...
-            #evaluate probability of being absorbed
-            #...
-            if absorption_criterion :
+            if rand() < self.absorptionProb() :
                 self.absorbed=True
 
-
-        scattering_criterion = False
-        #...
-        #evaluate probability of being scattered (elastic scattering)
-        #...
-        if scattering_criterion :
+        if rand() < self.scatteringProb() :
             self.uddir()
-
             
         if abs(nh) > H0 :
             self.escaped = True
-
-        else :
-            self.udpos(ts)
+        
+        self.udpos(ts)
 
 
             
@@ -98,17 +97,7 @@ class CRSet :
                 dead = False
                 break
         self.isDead = dead
-        print "He's dead Jim"
-
             
-    # def walk0(ts=TIMESTEP):
-    #     #need caractèrisation de "traverser la moitié du plan gal"
-    #     for ray in self.rays :
-    #         if not ray.absorded :
-    #             ray.diffuse(ts)
-    #     self.udIsDead()
-    #     self.epoch+=1
-        
 
     def walk(self,ts=TIMESTEP):
         for ray in self.rays :
@@ -118,11 +107,30 @@ class CRSet :
         self.epoch+=1
 
     def show(self,ax) :
-        radii = [ray.r for ray in self.rays]
-        heights = [ray.h for ray in self.rays]
-        ax.scatter(radii,heights)
+        r_alive=[]
+        h_alive=[]
+        r_esc=[]
+        h_esc=[]
+        r_abs=[]
+        h_abs=[]
+        for ray in self.rays :
+            if ray.absorbed :
+                r_abs.append(ray.r)
+                h_abs.append(ray.h)
+            elif ray.escaped :
+                r_esc.append(ray.r)
+                h_esc.append(ray.h)
+            else :
+                r_alive.append(ray.r) 
+                h_alive.append(ray.h)
+        ax.scatter(r_alive,h_alive,color="blue")
+        ax.scatter(r_abs,h_abs,color="red")
+        ax.scatter(r_esc,h_esc,color="green")
 
         rmin,rmax=ax.get_xlim()
-        ax.plot(np.linspace(rmin,rmax,100),-H0*np.ones(100),color='k')
-        ax.plot(np.linspace(rmin,rmax,100),+H0*np.ones(100),color='k')
+        rrr=np.linspace(0,rmax,100)
+        lim=H0*np.ones(100)
+        ax.plot(rrr,-lim,color='k')
+        ax.plot(rrr,+lim,color='k')
+        #ax.fillbetween()...
 
