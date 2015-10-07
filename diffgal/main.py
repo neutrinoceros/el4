@@ -10,26 +10,28 @@ import pylab as pl
 # script
 #-------------------------
 #fig,ax=pl.subplots()
-fig=pl.figure(1)
-ax=fig.add_subplot(111)
 pl.ion()
-pl.draw()
+fig=pl.figure()
+
 bench = CRSet(int(1e4))
 while bench.epoch < MAXEPOCH and not bench.isDead :
     bench.walk()
-    if bench.epoch % 10 == 0 :
-        #fig.clf()
-        print 'hey'
-        bench.show(ax)
+    if bench.epoch in [1,MAXEPOCH] or bench.epoch % 5 == 0 :
+        fig.clf()
+        pl.xlim(0,5e1)
+        pl.ylim(-H0-1,H0+1)
+        bench.show()
         pl.draw()
+
+
+pl.ioff()
 
 if bench.epoch == MAXEPOCH :
     print "MAXEPOCH reached"
 else :
     print "every particle was rather absorbed or escaped"
 
-
-#bench.show(ax);pl.show()
+close=raw_input('press enter to end the program')
 
 
 #-------------------------

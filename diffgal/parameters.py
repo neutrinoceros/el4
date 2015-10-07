@@ -18,5 +18,5 @@ BETA=0.5#adim
 
 
 ##
-TIMESTEP=.01#???
+TIMESTEP=1e-3#???
 MAXEPOCH=5e2 #???

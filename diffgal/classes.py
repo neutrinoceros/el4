@@ -3,7 +3,7 @@
 from parameters import *
 from functions import *
 import numpy as np
-from numpy.random import rand, uniform
+from numpy.random import rand, randint, uniform
 import pylab as pl
 
 #-------------------------
@@ -33,7 +33,7 @@ class CosmicRay :
 
 
     def udtheta(self) :
-        self.theta=np.arccos(self.mu)
+        self.theta=(-1)**randint(2)*np.arccos(self.mu)
 
 
     def getnextpos(self,ts=TIMESTEP):
@@ -74,12 +74,12 @@ class CosmicRay :
 
         if rand() < self.scatteringProb() :
             self.uddir()
-            
-        if abs(nh) > H0 :
-            self.escaped = True
         
         self.udpos(ts)
-
+    
+        if abs(self.h) > H0 :
+            self.escaped = True
+        
 
             
 class CRSet :
@@ -106,7 +106,7 @@ class CRSet :
         self.udIsDead()
         self.epoch+=1
 
-    def show(self,ax) :
+    def show(self) :
         r_alive=[]
         h_alive=[]
         r_esc=[]
@@ -123,14 +123,14 @@ class CRSet :
             else :
                 r_alive.append(ray.r) 
                 h_alive.append(ray.h)
-        ax.scatter(r_alive,h_alive,color="blue")
-        ax.scatter(r_abs,h_abs,color="red")
-        ax.scatter(r_esc,h_esc,color="green")
+        pl.scatter(r_alive,h_alive,color="blue",alpha=0.5)
+        pl.scatter(r_abs,h_abs,color="red",alpha=0.5)
+        pl.scatter(r_esc,h_esc,color="green",alpha=0.5)
 
-        rmin,rmax=ax.get_xlim()
-        rrr=np.linspace(0,rmax,100)
+        #rmin,rmax=ax.get_xlim()
+        rrr=np.linspace(0,1e3,100)
         lim=H0*np.ones(100)
-        ax.plot(rrr,-lim,color='k')
-        ax.plot(rrr,+lim,color='k')
+        pl.plot(rrr,-lim,color='k')
+        pl.plot(rrr,+lim,color='k')
         #ax.fillbetween()...
 
