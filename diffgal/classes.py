@@ -38,7 +38,7 @@ class CosmicRay :
 
     def getnextpos(self,ts=TIMESTEP):
         #NB : acutal radial and vertical velocities need to be adjusted to take azimutal vel into account
-        nextr = self.r + LIGHTC * np.sin(self.theta) * ts#radial projection of the velocity aplied
+        nextr = np.abs(self.r + LIGHTC * np.sin(self.theta) * ts)#radial projection of the velocity aplied
         nexth = self.h + LIGHTC * np.cos(self.theta) * ts
         return nextr,nexth
 
