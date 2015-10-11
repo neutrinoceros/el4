@@ -3,7 +3,6 @@
 from parameters import *
 from functions import *
 import numpy as np
-from numpy.random import rand, randint, uniform
 import pylab as pl
 
 #-------------------------
@@ -14,7 +13,7 @@ class CosmicRay :
 
     def __init__(self) :
         """constructeur d'une particule aléatoire dans le plan galactique"""
-        self.r = uniform(0,RGAS)#TEMPORARY
+        self.r = gen_R()
         self.h = 0.
         self.E = uniform(EMIN,EMAX)#TEMPORARY
 
@@ -65,7 +64,7 @@ class CosmicRay :
 
 
     def absorptionProb(self):
-        return np.exp(opticalDepth(self.r))
+        return 1.-np.exp(-opticalDepth(self.r))
 
 
     def propag(self,ts=TIMESTEP) :
@@ -92,8 +91,12 @@ class CRSet :
         self.rays = [CosmicRay() for n in range(N)]
         self.epoch = 0.
         self.isDead = False
+        self.alive_rays = []
+        self.esc_rays = []
+        self.abs_rays = []
+        self.udStatus()
 
-
+        
     def udIsDead(self):
         dead = True
         for ray in self.rays :
@@ -103,6 +106,19 @@ class CRSet :
         self.isDead = dead
             
 
+    def udStatus(self):
+        self.abs_rays = []
+        self.esc_rays = []
+        self.alive_rays = []
+        for ray in self.rays :
+            if ray.absorbed :
+                self.abs_rays.append(ray)
+            elif ray.escaped :
+                self.esc_rays.append(ray)
+            else :
+                self.alive_rays.append(ray)
+
+
     def walk(self,ts=TIMESTEP):
         for ray in self.rays :
             if not (ray.absorbed or ray.escaped) :
@@ -110,31 +126,30 @@ class CRSet :
         self.udIsDead()
         self.epoch+=1
 
+
     def show(self) :
-        r_alive=[]
-        h_alive=[]
-        r_esc=[]
-        h_esc=[]
-        r_abs=[]
-        h_abs=[]
-        for ray in self.rays :
-            if ray.absorbed :
-                r_abs.append(ray.r)
-                h_abs.append(ray.h)
-            elif ray.escaped :
-                r_esc.append(ray.r)
-                h_esc.append(ray.h)
-            else :
-                r_alive.append(ray.r) 
-                h_alive.append(ray.h)
-        pl.scatter(r_alive,h_alive,color="blue",alpha=ALPHA,s=SIZE)
-        pl.scatter(r_abs,h_abs,color="red",alpha=ALPHA,s=SIZE)
-        pl.scatter(r_esc,h_esc,color="green",alpha=ALPHA,s=SIZE)
+        self.udStatus()
+        r1 = [ray.r for ray in self.alive_rays]
+        r2 = [ray.r for ray in self.abs_rays]
+        r3 = [ray.r for ray in self.esc_rays]
+        h1 = [ray.h for ray in self.alive_rays]
+        h2 = [ray.h for ray in self.abs_rays]
+        h3 = [ray.h for ray in self.esc_rays]
+        pl.scatter(r1,h1,color="blue",alpha=ALPHA,s=SIZE)
+        pl.scatter(r2,h2,color="red",alpha=ALPHA,s=SIZE)
+        pl.scatter(r3,h3,color="green",alpha=ALPHA,s=SIZE)
 
         #rmin,rmax=ax.get_xlim()
-        rrr=np.linspace(0,1e3,100)
-        lim=H0*np.ones(100)
+        rrr=np.linspace(0,1000*RCR,3)
+        lim=H0*np.ones(len(rrr))
         pl.plot(rrr,-lim,color='k')
         pl.plot(rrr,+lim,color='k')
         #ax.fillbetween()...
 
+
+    def hist(self) :
+        self.udStatus()
+        r_alive = [ray.r for ray in self.alive_rays]
+        r_abs   = [ray.r for ray in self.abs_rays]
+        r_esc   = [ray.r for ray in self.esc_rays]
+        pl.hist([r_abs,r_esc,r_alive],bins=100,range=(0,10*RCR),color=['r','g','b'],alpha=ALPHA/1.5,histtype=STYLE,stacked=True)

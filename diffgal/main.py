@@ -3,8 +3,10 @@
 from classes import *
 from functions import *
 
+from time import time
 import numpy as np
 import pylab as pl
+
 
 #-------------------------
 # script
@@ -13,41 +15,28 @@ import pylab as pl
 pl.ion()
 fig=pl.figure()
 
-bench = CRSet(int(1e3))
+print "sourcing %.1e particles..." % (SAMPLESIZE)
+t1=time()
+bench = CRSet(int(SAMPLESIZE))
+print "took {}s".format(round(time()-t1,1))
+print "entering main loop"
+
 while bench.epoch < MAXEPOCH and not bench.isDead :
     bench.walk()
-    #if bench.epoch in [1,MAXEPOCH] or bench.epoch % 5 == 0 :
-    if 1 :
+    if bench.epoch%10==0 :
         fig.clf()
-        pl.xlim(0,5e1)
+        pl.xlim(0,10*RCR)
         pl.ylim(-H0-1,H0+1)
         bench.show()
         pl.draw()
 
-
+pl.figure(2)
+bench.hist()
 pl.ioff()
 
 if bench.epoch == MAXEPOCH :
     print "MAXEPOCH reached"
 else :
-    print "every particle was rather absorbed or escaped"
+    print "every particle was either absorbed or escaped"
 
 close=raw_input('press enter to end the program')
-
-
-#-------------------------
-# plotting
-#-------------------------
-# fig,ax=pl.subplots()
-# R=np.arange(-100,100,1e-2)
-
-# #...
-# #ax.loglog(R,sigma(R))
-# #ax.loglog(R,opticalDepth(R))
-# #ax.semilogx(R,absorptionProb(R))
-# #ax.plot(R,sourceDensity(R))
-
-# #ax.plot(R,np.arccos(R))
-# bench.show(ax)
-
-#pl.show()
