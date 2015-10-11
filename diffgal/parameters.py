@@ -20,3 +20,8 @@ BETA=0.5#adim
 ##
 TIMESTEP=1e-3#???
 MAXEPOCH=5e2 #???
+
+
+##plotting
+ALPHA=0.8
+SIZE=0.8

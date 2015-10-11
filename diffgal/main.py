@@ -13,7 +13,7 @@ import pylab as pl
 pl.ion()
 fig=pl.figure()
 
-bench = CRSet(int(1e4))
+bench = CRSet(int(1e3))
 while bench.epoch < MAXEPOCH and not bench.isDead :
     bench.walk()
     #if bench.epoch in [1,MAXEPOCH] or bench.epoch % 5 == 0 :
