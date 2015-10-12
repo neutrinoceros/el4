@@ -1,6 +1,7 @@
 #-*-coding:utf-8-*-
 
 import numpy as np
+import pylab as pl
 from numpy.random import rand, randint, uniform, normal
 from parameters import *
 
@@ -43,6 +44,14 @@ def normalizedSourceDensity(R):
     return sourceDensity(R)/NSD
 
 
+def fQ3(R):
+    return sourceDensity(R)*sigma(R)
+
+NQ3=integral(fQ3,0,1000*RCR)
+def normalizedfQ3(R):
+    return fQ3(R)/NQ3
+
+
 #-----------------------------------
 # fonctions utiles au tirage random
 #-----------------------------------
@@ -59,9 +68,47 @@ def gen_R():
 
 
 
+#------------------------------------
+# fonctions de reponse aux questions
+#------------------------------------
 
-#-----------------------
-# fonctions de plotting
-#-----------------------
+def Q1(myCRSet) :
+    myCRSet.udStatus()
+    Eabs=[r.E for r in myCRSet.abs_rays]
+    
+    fig,ax=pl.subplots()
+    ax.hist(Eabs,alpha=ALPHA/1.5,color='r',histtype=STYLE)
+    #manque barres d'erreur
+    ax.set_xlabel("Energy (GeV)")
+    ax.set_ylabel("# of rays absorbed")
+    ax.set_xscale("log")
+    ax.set_title("Q1")
 
-#...
+def Q2(myCRSet) :
+    Etot = 0.
+    Eabs = 0.
+    for r in myCRSet.rays :
+        Etot += r.E
+    for r in myCRSet.abs_rays :
+        Eabs += r.E
+    
+    print "Q2 : Total fraction of absorbed energy estimated to : %.2e" % (Eabs/Etot)
+    #manque estimation de l'incertitude
+
+def Q3(myCRSet) :
+    rabs = [ray.r for ray in myCRSet.abs_rays]
+    fig,ax=pl.subplots()
+    bins0=[10**n for n in np.linspace(0,1,10)]
+    bins=[]
+    for n in range(0,7):
+        bins+=[10**(n-3)*b for b in bins0]
+    #print bins
+
+    ax.hist(rabs,bins=bins,color='r',alpha=ALPHA/1.5,histtype='bar')
+    R = np.arange(0,1e3*RCR,1e-3)
+    ax.plot(R,normalizedfQ3(R),c='b',lw=3,alpha=ALPHA,label=r'$\propto \Sigma(R)\times (1+(R/R_{CR})^{-\alpha}$')
+    ax.set_xlabel("galactic radius (kpc)")
+    ax.set_ylabel("# of rays absorbed")
+    ax.legend()
+    ax.set_xscale("log")
+    ax.set_title("Q3")

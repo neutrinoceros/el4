@@ -32,11 +32,19 @@ while bench.epoch < MAXEPOCH and not bench.isDead :
 
 pl.figure(2)
 bench.hist()
-pl.ioff()
+
 
 if bench.epoch == MAXEPOCH :
     print "MAXEPOCH reached"
 else :
     print "every particle was either absorbed or escaped"
 
+#-------------------------------
+#answers to original questions :
+#-------------------------------
+Q1(bench)
+Q2(bench)
+Q3(bench)
+
+pl.ioff()
 close=raw_input('press enter to end the program')
