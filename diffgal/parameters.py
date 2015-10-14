@@ -24,7 +24,7 @@ BETA=0.5#adim
 
 
 ##
-SAMPLESIZE=int(1e3)
+SAMPLESIZE=int(1e5)
 TIMESTEP=1e-4#???
 MAXEPOCH=5e4 #???
 

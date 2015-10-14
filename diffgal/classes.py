@@ -26,7 +26,7 @@ class CosmicRay :
         #initialy the particle is neither absorbed nor away from the galaxy or its halo
         self.absorbed = False
         self.escaped = False
-
+        self.age = 0
         if rand() < self.absorptionProb()/2 :#une "demie traversée" à la naissance
             self.absorbed = True
 
@@ -82,7 +82,21 @@ class CosmicRay :
     
         if abs(self.h) > H0 :
             self.escaped = True
-        
+        self.age+=1
+
+    def __repr__(self):
+        flag = 0
+        if self.absorbed :
+            flag = 1
+        elif self.escaped :
+            flag = 2
+
+        l  = '%e'     % (self.r)
+        l += '\t%e'   % (self.h)
+        l += '\t%e'   % (self.E)
+        l += '\t%10i' % (self.age)        
+        l += '\t%10i' % (flag)
+        return l
 
             
 class CRSet :
@@ -145,6 +159,23 @@ class CRSet :
         pl.plot(rrr,-lim,color='k')
         pl.plot(rrr,+lim,color='k')
         #ax.fillbetween()...
+
+        
+    def __repr__(self):
+        header = ""
+        with open("parameters.py",'r') as f :
+            headlines = f.readlines()
+        header = '# '.join(headlines)
+        header += '\n\n' + 'r(kpc)'
+        header += '\t\th(kpc)'
+        header += '\t\tE(GeV)'
+        header += '\t\tlast iter'
+        header += '\tabs/esc flag\n\n'
+        #print header 
+        chaine = ""
+        for r in self.rays :
+            chaine += r.__repr__() + '\n'
+        return header + chaine
 
 
     def hist(self) :
