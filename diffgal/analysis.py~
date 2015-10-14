@@ -1,0 +1,25 @@
+#-*-coding:utf-8-*-
+
+from classes import *
+from functions import *
+
+from time import time
+import numpy as np
+import pylab as pl
+
+
+bench = CRSet(SAMPLESIZE)
+bench.load('run1444850897.dat')
+
+
+#-------------------------------
+#answers to original questions :
+#-------------------------------
+
+pl.ion()
+Q1(bench)
+Q2(bench)
+Q3(bench)
+
+pl.ioff()
+close=raw_input('press enter to end the program')

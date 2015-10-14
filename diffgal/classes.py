@@ -11,10 +11,15 @@ import pylab as pl
 
 class CosmicRay :
 
-    def __init__(self) :
+    def __init__(self,rdpos=True) :
         """constructeur d'une particule aléatoire dans le plan galactique"""
-        self.r = gen_R()
-        self.h = 0.
+        if rdpos :
+            self.r = gen_R()
+            self.h = 0.
+        else :
+            self.r = -1111
+            self.h = -1111
+
         self.E = uniform(EMIN,EMAX)#TEMPORARY
 
         #mu, phi : propagation direction in spherical coords
@@ -101,8 +106,8 @@ class CosmicRay :
             
 class CRSet :
 
-    def __init__(self,N):
-        self.rays = [CosmicRay() for n in range(N)]
+    def __init__(self,N,rdpos=True):
+        self.rays = [CosmicRay(rdpos) for n in range(N)]
         self.epoch = 0.
         self.isDead = False
         self.alive_rays = []
@@ -166,16 +171,39 @@ class CRSet :
         with open("parameters.py",'r') as f :
             headlines = f.readlines()
         header = '# '.join(headlines)
-        header += '\n\n' + 'r(kpc)'
+        header += '\n\n' + '#r(kpc)'
         header += '\t\th(kpc)'
         header += '\t\tE(GeV)'
         header += '\t\tlast iter'
         header += '\tabs/esc flag\n\n'
-        #print header 
         chaine = ""
         for r in self.rays :
             chaine += r.__repr__() + '\n'
         return header + chaine
+
+
+    def load(self,filename) :
+        tab = np.loadtxt(filename)
+        rs, hs, Es, ages, flags = tab[:,0],tab[:,1],tab[:,2],tab[:,3],tab[:,4]
+        N = tab.shape[0]
+        if N != len(self.rays) :
+            print "err 001 : CRSet size not adapted to data : N={}, len(self.rays)={}".format(N,len(self.rays))
+        else :
+            for i in range(N) :
+                ray = self.rays[i]
+                ray.r   = tab[i,0]
+                ray.h   = tab[i,1]
+                ray.E   = tab[i,2]
+                ray.age = tab[i,3]
+                flag    = tab[i,4]
+                if flag == 1 :
+                    tests = [True, False]
+                elif flag == 2 :
+                    tests = [False, True]
+                else :
+                    tests = [False,False]
+                ray.absorbed, ray.escaped = tests
+            self.udStatus()
 
 
     def hist(self) :

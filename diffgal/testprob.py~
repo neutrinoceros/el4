@@ -1,0 +1,19 @@
+from classes import *
+from parameters import *
+from functions import *
+
+def gen_E(E1=EMIN,E2=EMAX):
+    M = 1./(E2-E1)
+    passage=False
+    while not passage :
+        x1 = uniform(E1,E2)
+        x2 = uniform(0,M)
+        if x2 < np.log(x1) :
+            passage = True
+    return x1
+
+
+ens = [gen_E() for n in range(100)] 
+pl.figure()
+pl.xlim(EMIN,EMAX)
+pl.hist(tab,bins = 10, normed = 1)

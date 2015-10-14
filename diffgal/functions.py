@@ -75,12 +75,18 @@ def gen_R():
 def Q1(myCRSet) :
     myCRSet.udStatus()
     Eabs=[r.E for r in myCRSet.abs_rays]
-    
     fig,ax=pl.subplots()
-    ax.hist(Eabs,alpha=ALPHA/1.5,color='r',histtype=STYLE)
+    
+    bins0=[10**n for n in np.linspace(0,1,10)]
+    bins=[]
+    for n in range(2,7):
+        bins+=[10**(n)*b for b in bins0]
+    weights = np.ones_like(Eabs)/float(len(Eabs))
+    ax.hist(Eabs,bins=bins,weights=weights,alpha=ALPHA/1.5,color='r',histtype='bar',normed=False)
+
     #manque barres d'erreur
     ax.set_xlabel("Energy (GeV)")
-    ax.set_ylabel("# of rays absorbed")
+    ax.set_ylabel("fraction of all absorbed rays")
     ax.set_xscale("log")
     ax.set_title("Q1")
 
@@ -102,9 +108,9 @@ def Q3(myCRSet) :
     bins=[]
     for n in range(0,7):
         bins+=[10**(n-3)*b for b in bins0]
-    #print bins
 
-    ax.hist(rabs,bins=bins,color='r',alpha=ALPHA/1.5,histtype='bar')
+    weights = np.ones_like(rabs)/float(len(rabs))
+    ax.hist(rabs,bins=bins,weights=weights,color='r',alpha=ALPHA/1.5,histtype='bar')
     R = np.arange(0,1e3*RCR,1e-3)
     ax.plot(R,normalizedfQ3(R),c='b',lw=3,alpha=ALPHA,label=r'$\propto \Sigma(R)\times (1+(R/R_{CR})^{-\alpha}$')
     ax.set_xlabel("galactic radius (kpc)")
