@@ -22,9 +22,9 @@ print "entering main loop"
 
 while bench.epoch < MAXEPOCH and not bench.isDead :
     bench.walk()
-    if bench.epoch%1e3==0 :
+    if bench.epoch%1e1==0 :
         fig.clf()
-        pl.xlim(0,10*RCR)
+        pl.xlim(0,2*RCR)
         pl.ylim(-H0-1,H0+1)
         bench.show()
         pl.draw()

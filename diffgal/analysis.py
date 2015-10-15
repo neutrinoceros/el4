@@ -10,7 +10,7 @@ import pylab as pl
 t0=time()
 print "loading data..."
 bench = CRSet(SAMPLESIZE,rdpos=False)
-bench.load('run1444850897.dat')
+bench.load('refres.dat')
 
 print "took {}s".format(round(time()-t0,1))
 
@@ -22,6 +22,8 @@ pl.ion()
 Q1(bench)
 Q2(bench)
 Q3(bench)
+#Q4(bench)
+#Q5(bench)
 
 pl.ioff()
 close=raw_input('press enter to end the program')

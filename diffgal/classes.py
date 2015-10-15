@@ -14,13 +14,15 @@ class CosmicRay :
     def __init__(self,rdpos=True) :
         """constructeur d'une particule aléatoire dans le plan galactique"""
         if rdpos :
-            self.r = gen_R()
+            #self.r = gen_R()
+            self.r = RCR * np.sqrt(rand()**(-1./(ALPHA-1)))#CORR
             self.h = 0.
         else :
             self.r = -1111
             self.h = -1111
 
-        self.E = uniform(EMIN,EMAX)#TEMPORARY
+        #self.E = uniform(EMIN,EMAX)#TEMPORARY
+        self.E = EMIN * np.exp(rand()*np.log(EMAX/EMIN))#CORR
 
         #mu, phi : propagation direction in spherical coords
         self.mu = uniform(-1.,1.)#mu=cos(theta) is uniformly distributed
@@ -69,7 +71,7 @@ class CosmicRay :
 
 
     def absorptionProb(self):
-        return 1.-np.exp(-opticalDepth(self.r))
+        return 1.-np.exp(-opticalDepth(self.r))#a revoir
 
 
     def propag(self,ts=TIMESTEP) :

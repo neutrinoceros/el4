@@ -10,9 +10,9 @@ SIGMA0=5e7#Msol/kpc^2
 RGAS=10#kpc
 
 #enoncé
-#KAPPA=5e-12#kpc^2/Msol
+KAPPA=5e-12#kpc^2/Msol
 #mieux ?
-KAPPA=5e-6#kpc^2/Msol
+#KAPPA=5e-6#kpc^2/Msol
 
 
 GAMMA=1#adim
